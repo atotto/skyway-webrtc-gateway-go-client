@@ -14,10 +14,11 @@ swagger.yaml:
 	sed -e 's|1\.peers|peers|g' \
 	    -e 's|2\.data|data|g' \
 	    -e 's|3\.media|media|g' \
+		-e 's/\r//g' \
 		$(shell go list -e -f "{{.Dir}}" github.com/skyway/skyway-webrtc-gateway/api)/api.yaml > swagger.yaml
 
 build: bin/swagger swagger.yaml
-	./bin/swagger generate client -f swagger.yaml
+	./bin/swagger generate client -f swagger.yaml --name gateway
 
 clean:
 	rm -rf bin
