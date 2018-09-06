@@ -20,6 +20,9 @@ type MediaConnectionAnswerOptions struct {
 	// constraints
 	// Required: true
 	Constraints *PeerCallConstraints `json:"constraints"`
+
+	// redirect params
+	RedirectParams *MediaRedirectOptions `json:"redirect_params,omitempty"`
 }
 
 // Validate validates this media connection answer options
