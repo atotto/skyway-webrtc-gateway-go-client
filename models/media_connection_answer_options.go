@@ -33,6 +33,10 @@ func (m *MediaConnectionAnswerOptions) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateRedirectParams(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -49,6 +53,24 @@ func (m *MediaConnectionAnswerOptions) validateConstraints(formats strfmt.Regist
 		if err := m.Constraints.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("constraints")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *MediaConnectionAnswerOptions) validateRedirectParams(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RedirectParams) { // not required
+		return nil
+	}
+
+	if m.RedirectParams != nil {
+		if err := m.RedirectParams.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("redirect_params")
 			}
 			return err
 		}
