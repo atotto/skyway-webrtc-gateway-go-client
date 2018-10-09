@@ -107,6 +107,11 @@ func (o *DataParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry
 	}
 	var res []error
 
+	// workaround for empty body
+	if err := r.SetBodyParam(struct{}{}); err != nil {
+		return err
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
