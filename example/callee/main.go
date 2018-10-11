@@ -23,6 +23,7 @@ var apikey = os.Getenv("SKYWAY_API_KEY")
 
 var peerID = flag.String("peer", "callee", "peer id")
 var useData = flag.Bool("data", false, "data")
+var useMedia = flag.Bool("media", true, "media")
 var domain = flag.String("domain", "localhost", "domain name")
 var address = flag.String("addr", "localhost:8000", "gateway address")
 
@@ -103,127 +104,130 @@ func main() {
 		}
 	}
 
-	// create_media
-	vMedia, err := c.Media.Media(&media.MediaParams{
-		Context: ctx,
-		Body: &models.MediaOptions{
-			IsVideo: swag.Bool(true),
-		},
-	})
-	if err != nil {
-		log.Printf("failed to create video media: %s", err)
-		return
-	}
-	log.Printf("media video: port %d", *vMedia.Payload.Port)
-
-	aMedia, err := c.Media.Media(&media.MediaParams{
-		Context: ctx,
-		Body: &models.MediaOptions{
-			IsVideo: swag.Bool(false),
-		},
-	})
-	if err != nil {
-		log.Printf("failed to create audio media: %s", err)
-		return
-	}
-	log.Printf("media audio: port %d", *aMedia.Payload.Port)
-
 	peerEventParams := peers.NewPeerEventParams()
 	peerEventParams.Context = ctx
 	peerEventParams.PeerID = *peerID
 	peerEventParams.Token = *peerToken
 
-	// wait call
-	var mediaConnID string
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		default:
-		}
-		ev, err := c.Peers.PeerEvent(peerEventParams)
-		if err != nil {
-			log.Printf("failed to get peer event: %s", err)
-			time.Sleep(time.Second)
-			continue
-		}
-		if *ev.Payload.Event == "CALL" {
-			mediaConnID = *ev.Payload.CallParams.MediaConnectionID
-			break
-		}
-	}
-
-	// caller peer_id
-	mStatus, err := c.Media.MediaConnectionStatus(&media.MediaConnectionStatusParams{
-		Context:           ctx,
-		MediaConnectionID: mediaConnID,
-	})
-	if err != nil {
-		log.Printf("failed to get media connection statue: %s", err)
-		return
-	}
-	log.Printf("call: peer_id=%s", *mStatus.Payload.RemoteID)
-
-	// answer
-	constraints := &models.PeerCallConstraints{}
-	if err := constraints.UnmarshalBinary([]byte(defaultConstraints)); err != nil {
-		log.Printf("failed to create constraints: %s", err)
-		return
-	}
-	constraints.VideoParams.MediaID = vMedia.Payload.MediaID
-	constraints.AudioParams.MediaID = aMedia.Payload.MediaID
-	_, err = c.Media.MediaConnectionAnswer(&media.MediaConnectionAnswerParams{
-		Context:           ctx,
-		MediaConnectionID: mediaConnID,
-		Body: &models.MediaConnectionAnswerOptions{
-			Constraints: constraints,
-			RedirectParams: &models.MediaRedirectOptions{
-				Video: &models.MediaRedirectOptionsVideo{
-					IPV4: RECV_ADDR,
-					Port: VIDEO_RECV_PORT,
-				},
-				Audio: &models.MediaRedirectOptionsAudio{
-					IPV4: RECV_ADDR,
-					Port: AUDIO_RECV_PORT,
-				},
+	if *useMedia {
+		// create_media
+		vMedia, err := c.Media.Media(&media.MediaParams{
+			Context: ctx,
+			Body: &models.MediaOptions{
+				IsVideo: swag.Bool(true),
 			},
-		},
-	})
-	if err != nil {
-		log.Printf("failed to answer media connection: %s", err)
-		return
-	}
-	log.Println("answered")
-
-	// wait_stream
-	for {
-		select {
-		case <-ctx.Done():
+		})
+		if err != nil {
+			log.Printf("failed to create video media: %s", err)
 			return
-		default:
 		}
-		ev, err := c.Media.MediaConnectionEvent(&media.MediaConnectionEventParams{
+		log.Printf("media video: port %d", *vMedia.Payload.Port)
+
+		aMedia, err := c.Media.Media(&media.MediaParams{
+			Context: ctx,
+			Body: &models.MediaOptions{
+				IsVideo: swag.Bool(false),
+			},
+		})
+		if err != nil {
+			log.Printf("failed to create audio media: %s", err)
+			return
+		}
+		log.Printf("media audio: port %d", *aMedia.Payload.Port)
+
+		// wait call
+		var mediaConnID string
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			default:
+			}
+			ev, err := c.Peers.PeerEvent(peerEventParams)
+			if err != nil {
+				log.Printf("failed to get peer event: %s", err)
+				time.Sleep(time.Second)
+				continue
+			}
+			if *ev.Payload.Event == "CALL" {
+				mediaConnID = *ev.Payload.CallParams.MediaConnectionID
+				break
+			}
+		}
+
+		// caller peer_id
+		mStatus, err := c.Media.MediaConnectionStatus(&media.MediaConnectionStatusParams{
 			Context:           ctx,
 			MediaConnectionID: mediaConnID,
 		})
 		if err != nil {
-			log.Printf("failed to : %s", err)
+			log.Printf("failed to get media connection statue: %s", err)
 			return
 		}
-		if *ev.Payload.Event == "STREAM" {
-			break
-		}
-	}
-	log.Println("stream")
+		log.Printf("call: peer_id=%s", *mStatus.Payload.RemoteID)
 
-	defer c.Media.MediaConnectionClose(&media.MediaConnectionCloseParams{
-		Context:           context.Background(),
-		MediaConnectionID: mediaConnID,
-	})
+		// answer
+		constraints := &models.PeerCallConstraints{}
+		if err := constraints.UnmarshalBinary([]byte(defaultConstraints)); err != nil {
+			log.Printf("failed to create constraints: %s", err)
+			return
+		}
+		constraints.VideoParams.MediaID = vMedia.Payload.MediaID
+		constraints.AudioParams.MediaID = aMedia.Payload.MediaID
+		_, err = c.Media.MediaConnectionAnswer(&media.MediaConnectionAnswerParams{
+			Context:           ctx,
+			MediaConnectionID: mediaConnID,
+			Body: &models.MediaConnectionAnswerOptions{
+				Constraints: constraints,
+				RedirectParams: &models.MediaRedirectOptions{
+					Video: &models.MediaRedirectOptionsVideo{
+						IPV4: RECV_ADDR,
+						Port: VIDEO_RECV_PORT,
+					},
+					Audio: &models.MediaRedirectOptionsAudio{
+						IPV4: RECV_ADDR,
+						Port: AUDIO_RECV_PORT,
+					},
+				},
+			},
+		})
+		if err != nil {
+			log.Printf("failed to answer media connection: %s", err)
+			return
+		}
+		log.Println("answered")
+
+		// wait_stream
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			default:
+			}
+			ev, err := c.Media.MediaConnectionEvent(&media.MediaConnectionEventParams{
+				Context:           ctx,
+				MediaConnectionID: mediaConnID,
+			})
+			if err != nil {
+				log.Printf("failed to : %s", err)
+				return
+			}
+			if *ev.Payload.Event == "STREAM" {
+				break
+			}
+		}
+		log.Println("stream")
+
+		defer c.Media.MediaConnectionClose(&media.MediaConnectionCloseParams{
+			Context:           context.Background(),
+			MediaConnectionID: mediaConnID,
+		})
+	}
 
 	if *useData {
 		// create_data
 		d, err := c.Data.Data(&data.DataParams{
+			Body:    struct{}{},
 			Context: ctx,
 		})
 		if err != nil {
@@ -254,6 +258,8 @@ func main() {
 			}
 		}
 
+		log.Println("connected")
+
 		// wait_open
 		for {
 			select {
@@ -275,6 +281,11 @@ func main() {
 		}
 
 		log.Println("opened data channel")
+
+		defer c.Data.DataConnectionClose(&data.DataConnectionCloseParams{
+			Context:          context.Background(),
+			DataConnectionID: dataConnID,
+		})
 
 		_, err = c.Data.DataConnectionPut(&data.DataConnectionPutParams{
 			Context:          ctx,
