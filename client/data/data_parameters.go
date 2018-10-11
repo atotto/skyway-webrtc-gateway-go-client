@@ -21,7 +21,7 @@ import (
 // NewDataParams creates a new DataParams object
 // with the default values initialized.
 func NewDataParams() *DataParams {
-
+	var ()
 	return &DataParams{
 
 		timeout: cr.DefaultTimeout,
@@ -31,7 +31,7 @@ func NewDataParams() *DataParams {
 // NewDataParamsWithTimeout creates a new DataParams object
 // with the default values initialized, and the ability to set a timeout on a request
 func NewDataParamsWithTimeout(timeout time.Duration) *DataParams {
-
+	var ()
 	return &DataParams{
 
 		timeout: timeout,
@@ -41,7 +41,7 @@ func NewDataParamsWithTimeout(timeout time.Duration) *DataParams {
 // NewDataParamsWithContext creates a new DataParams object
 // with the default values initialized, and the ability to set a context for a request
 func NewDataParamsWithContext(ctx context.Context) *DataParams {
-
+	var ()
 	return &DataParams{
 
 		Context: ctx,
@@ -51,7 +51,7 @@ func NewDataParamsWithContext(ctx context.Context) *DataParams {
 // NewDataParamsWithHTTPClient creates a new DataParams object
 // with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewDataParamsWithHTTPClient(client *http.Client) *DataParams {
-
+	var ()
 	return &DataParams{
 		HTTPClient: client,
 	}
@@ -61,6 +61,13 @@ func NewDataParamsWithHTTPClient(client *http.Client) *DataParams {
 for the data operation typically these are written to a http.Request
 */
 type DataParams struct {
+
+	/*Body
+	  bodyには空のJSON文字列("{}"")が必要です
+
+	*/
+	Body interface{}
+
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
@@ -99,6 +106,17 @@ func (o *DataParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithBody adds the body to the data params
+func (o *DataParams) WithBody(body interface{}) *DataParams {
+	o.SetBody(body)
+	return o
+}
+
+// SetBody adds the body to the data params
+func (o *DataParams) SetBody(body interface{}) {
+	o.Body = body
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *DataParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -107,9 +125,10 @@ func (o *DataParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry
 	}
 	var res []error
 
-	// workaround for empty body
-	if err := r.SetBodyParam(struct{}{}); err != nil {
-		return err
+	if o.Body != nil {
+		if err := r.SetBodyParam(o.Body); err != nil {
+			return err
+		}
 	}
 
 	if len(res) > 0 {
