@@ -172,11 +172,12 @@ func main() {
 			Context: ctx,
 		})
 		if err != nil {
-			log.Printf("failed to : %s", err)
+			log.Printf("failed to data: %s", err)
 			return
 		}
 
 		dataID := d.Payload.DataID
+		log.Printf("data channel: port %d", *d.Payload.Port)
 
 		// connect
 		dc, err := c.Data.DataConnectionsCreate(&data.DataConnectionsCreateParams{
@@ -224,7 +225,7 @@ func main() {
 			}
 		}
 
-		log.Println("opened")
+		log.Println("opened data channel")
 	}
 
 	<-ctx.Done()

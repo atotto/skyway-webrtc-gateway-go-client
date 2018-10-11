@@ -232,30 +232,27 @@ func main() {
 		}
 
 		dataID := d.Payload.DataID
+		log.Printf("data channel: port %d", *d.Payload.Port)
 
-		dc, err := c.Data.DataConnectionsCreate(&data.DataConnectionsCreateParams{
-			Context: ctx,
-			Body: &models.PeerConnectOptions{
-				PeerID: peerID,
-				Token:  peerToken,
-				Options: &models.PeerConnectOptionsOptions{
-					Serialization: "BINARY",
-				},
-				Params: &models.PeerConnectOptionsParams{
-					DataID: *dataID,
-				},
-				RedirectParams: &models.DataConnectionRedirectOptions{
-					IPV4: DATA_RECV_ADDR,
-					Port: &DATA_RECV_PORT,
-				},
-			},
-		})
-		if err != nil {
-			log.Printf("failed to create connection data: %s", err)
-			return
+		// wait_connection
+		var dataConnID string
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			default:
+			}
+			ev, err := c.Peers.PeerEvent(peerEventParams)
+			if err != nil {
+				log.Printf("failed to get peer event: %s", err)
+				time.Sleep(time.Second)
+				continue
+			}
+			if *ev.Payload.Event == "CONNECTION" {
+				dataConnID = *ev.Payload.DataParams.DataConnectionID
+				break
+			}
 		}
-
-		dataConnID := dc.Payload.Params.DataConnectionID
 
 		// wait_open
 		for {
@@ -266,7 +263,7 @@ func main() {
 			}
 			ev, err := c.Data.DataConnectionEvents(&data.DataConnectionEventsParams{
 				Context:          ctx,
-				DataConnectionID: *dataConnID,
+				DataConnectionID: dataConnID,
 			})
 			if err != nil {
 				log.Printf("failed to : %s", err)
@@ -277,7 +274,27 @@ func main() {
 			}
 		}
 
-		log.Println("opened")
+		log.Println("opened data channel")
+
+		_, err = c.Data.DataConnectionPut(&data.DataConnectionPutParams{
+			Context:          ctx,
+			DataConnectionID: dataConnID,
+			Body: &models.DataConnectionPutOptions{
+				FeedParams: &models.DataConnectionFeedOptions{
+					Params: &models.DataConnectionFeedOptionsParams{
+						DataID: *dataID,
+					},
+				},
+				RedirectParams: &models.DataConnectionRedirectOptions{
+					IPV4: DATA_RECV_ADDR,
+					Port: &DATA_RECV_PORT,
+				},
+			},
+		})
+		if err != nil {
+			log.Printf("failed to : %s", err)
+			return
+		}
 	}
 
 	<-ctx.Done()
