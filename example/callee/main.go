@@ -292,9 +292,7 @@ func main() {
 			DataConnectionID: dataConnID,
 			Body: &models.DataConnectionPutOptions{
 				FeedParams: &models.DataConnectionFeedOptions{
-					Params: &models.DataConnectionFeedOptionsParams{
-						DataID: *dataID,
-					},
+					DataID: *dataID,
 				},
 				RedirectParams: &models.DataConnectionRedirectOptions{
 					IPV4: DATA_RECV_ADDR,
