@@ -26,7 +26,7 @@ type PeerCallOptions struct {
 	PeerID *string `json:"peer_id"`
 
 	// redirect params
-	RedirectParams *MediaRedirectOptions `json:"redirect_params,omitempty"`
+	RedirectParams *PeerCallRedirectOptions `json:"redirect_params,omitempty"`
 
 	// 接続対象のpeer_idを指定します
 	// Required: true

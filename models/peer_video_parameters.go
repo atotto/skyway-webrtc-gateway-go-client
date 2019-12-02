@@ -32,6 +32,9 @@ type PeerVideoParameters struct {
 	// SDP内部でdynamic assignされるメディアのペイロード番号を指定
 	PayloadType int64 `json:"payload_type,omitempty"`
 
+	// RTCP転送ポートを特定するためのIDです
+	RtcpID string `json:"rtcp_id,omitempty"`
+
 	// sampling rate
 	SamplingRate int64 `json:"sampling_rate,omitempty"`
 }

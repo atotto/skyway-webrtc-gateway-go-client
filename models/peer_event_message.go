@@ -34,8 +34,8 @@ type PeerEventMessage struct {
 	// Enum: [OPEN CONNECTION CALL STREAM CLOSE ERROR]
 	Event *string `json:"event"`
 
-	// peer params
-	PeerParams *PeerParametsers `json:"peer_params,omitempty"`
+	// params
+	Params *PeerParametsers `json:"params,omitempty"`
 }
 
 // Validate validates this peer event message
@@ -58,7 +58,7 @@ func (m *PeerEventMessage) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validatePeerParams(formats); err != nil {
+	if err := m.validateParams(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -223,16 +223,16 @@ func (m *PeerEventMessage) validateEvent(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *PeerEventMessage) validatePeerParams(formats strfmt.Registry) error {
+func (m *PeerEventMessage) validateParams(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.PeerParams) { // not required
+	if swag.IsZero(m.Params) { // not required
 		return nil
 	}
 
-	if m.PeerParams != nil {
-		if err := m.PeerParams.Validate(formats); err != nil {
+	if m.Params != nil {
+		if err := m.Params.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("peer_params")
+				return ve.ValidateName("params")
 			}
 			return err
 		}

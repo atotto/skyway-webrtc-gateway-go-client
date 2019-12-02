@@ -175,6 +175,36 @@ func (a *Client) MediaConnectionEvent(params *MediaConnectionEventParams) (*Medi
 }
 
 /*
+MediaConnectionPli ps l iパケットを送信します
+
+keyframe要求を相手に伝えるため、PLIパケットを送信します。どのメディアがkeyframe要求を必要としているか特定するため、メディアの転送先ポートとIPアドレスを指定します
+*/
+func (a *Client) MediaConnectionPli(params *MediaConnectionPliParams) (*MediaConnectionPliCreated, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewMediaConnectionPliParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "media_connection_pli",
+		Method:             "POST",
+		PathPattern:        "/media/connections/{media_connection_id}/pli",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &MediaConnectionPliReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*MediaConnectionPliCreated), nil
+
+}
+
+/*
 MediaConnectionStatus media connectionの状態を取得します
 
 MediaConnectionの状態を取得します
@@ -201,6 +231,66 @@ func (a *Client) MediaConnectionStatus(params *MediaConnectionStatusParams) (*Me
 		return nil, err
 	}
 	return result.(*MediaConnectionStatusOK), nil
+
+}
+
+/*
+MediaRtcpCreate rs tcpの待受ポート開放要求を送ります
+
+MediaConnectionで転送するRTCPを受け渡すためのUDPポート開放要求を送信します
+*/
+func (a *Client) MediaRtcpCreate(params *MediaRtcpCreateParams) (*MediaRtcpCreateCreated, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewMediaRtcpCreateParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "media_rtcp_create",
+		Method:             "POST",
+		PathPattern:        "/media/rtcp",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &MediaRtcpCreateReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*MediaRtcpCreateCreated), nil
+
+}
+
+/*
+MediaRtcpDelete rs tcp待ち受けポーtpの解放
+
+MediaConnectionで転送するRTCPを受け渡すためのUDPポートの閉鎖要求を送信します。MediaConnectionの中で利用中であればエラーを返します。
+*/
+func (a *Client) MediaRtcpDelete(params *MediaRtcpDeleteParams) (*MediaRtcpDeleteNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewMediaRtcpDeleteParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "media_rtcp_delete",
+		Method:             "DELETE",
+		PathPattern:        "/media/rtcp/{rtcp_id}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{""},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &MediaRtcpDeleteReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*MediaRtcpDeleteNoContent), nil
 
 }
 

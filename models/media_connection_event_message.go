@@ -27,7 +27,7 @@ type MediaConnectionEventMessage struct {
 
 	// イベントの種別を示します
 	// Required: true
-	// Enum: [STREAM CLOSE ERROR]
+	// Enum: [READY STREAM CLOSE ERROR]
 	Event *string `json:"event"`
 
 	// stream options
@@ -56,7 +56,7 @@ var mediaConnectionEventMessageTypeEventPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["STREAM","CLOSE","ERROR"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["READY","STREAM","CLOSE","ERROR"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -65,6 +65,9 @@ func init() {
 }
 
 const (
+
+	// MediaConnectionEventMessageEventREADY captures enum value "READY"
+	MediaConnectionEventMessageEventREADY string = "READY"
 
 	// MediaConnectionEventMessageEventSTREAM captures enum value "STREAM"
 	MediaConnectionEventMessageEventSTREAM string = "STREAM"
