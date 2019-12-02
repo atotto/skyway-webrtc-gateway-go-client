@@ -1,8 +1,8 @@
+API_VERSION?=0.1.0
 
 all: build
 
-setup:
-	go get -u -d github.com/skyway/skyway-webrtc-gateway || true
+setup: bin/swagger
 
 bin/swagger:
 	mkdir -p bin
@@ -10,14 +10,16 @@ bin/swagger:
 	chmod +x $@
 
 
+.PHONY: swagger.yaml
 swagger.yaml:
+	curl -sL "https://raw.githubusercontent.com/skyway/skyway-webrtc-gateway/${API_VERSION}/api/api.yaml" | \
 	sed -e 's|1\.peers|peers|g' \
 	    -e 's|2\.data|data|g' \
 	    -e 's|3\.media|media|g' \
 		-e 's/\r//g' \
-		$(shell go list -e -f "{{.Dir}}" github.com/skyway/skyway-webrtc-gateway/api)/api.yaml > swagger.yaml
+		> swagger.yaml
 
-build: bin/swagger swagger.yaml
+build: setup swagger.yaml
 	./bin/swagger generate client -f swagger.yaml --name gateway
 
 clean:
