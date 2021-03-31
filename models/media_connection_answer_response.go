@@ -96,14 +96,8 @@ type MediaConnectionAnswerResponseParams struct {
 	// Audioを特定するためのIDです
 	AudioID string `json:"audio_id,omitempty"`
 
-	// Audioを受け取るNative Clientのポート番号を指定します
-	AudioPort uint16 `json:"audio_port,omitempty"`
-
 	// Videoを特定するためのIDです
 	VideoID string `json:"video_id,omitempty"`
-
-	// Videoを受け取るNative Clientのポート番号を指定します
-	VideoPort uint16 `json:"video_port,omitempty"`
 }
 
 // Validate validates this media connection answer response params

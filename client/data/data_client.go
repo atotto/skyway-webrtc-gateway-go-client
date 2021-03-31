@@ -87,7 +87,7 @@ func (a *Client) DataConnectionClose(params *DataConnectionCloseParams) (*DataCo
 /*
 DataConnectionEvents data connectionオブジェクトからイベントを取得するのに利用します
 
-Long Pollでイベントを監視するのに利用します。連続でイベントが発火する場合があるため常に監視するようにしてください。
+Long Pollでイベントを監視するのに利用します。連続でイベントが発火する場合があるため常に監視するようにしてください
 */
 func (a *Client) DataConnectionEvents(params *DataConnectionEventsParams) (*DataConnectionEventsOK, error) {
 	// TODO: Validate the params before sending
@@ -117,7 +117,7 @@ func (a *Client) DataConnectionEvents(params *DataConnectionEventsParams) (*Data
 /*
 DataConnectionPut data connectionの動作を変更します
 
-DataConnectionで相手側から受信したデータの転送先指定と、DataConnectionに与えるデータの指定/変更を行います。
+DataConnectionで相手側から受信したデータの転送先指定と、DataConnectionに与えるデータの指定/変更を行います
 */
 func (a *Client) DataConnectionPut(params *DataConnectionPutParams) (*DataConnectionPutOK, error) {
 	// TODO: Validate the params before sending
@@ -177,7 +177,7 @@ func (a *Client) DataConnectionStatus(params *DataConnectionStatusParams) (*Data
 /*
 DataConnectionsCreate リモートのs peerへの data connection connection確立を開始します
 
-リモートのpeerへ発信し、DataConnectionの確立を試みます。接続確立は非同期で行われるため、/peers/{peer_id}/eventsを監視してください
+リモートのPeerへ発信し、DataConnectionの確立を試みます。接続確立は非同期で行われるため、/peers/{peer_id}/eventsを監視してください
 */
 func (a *Client) DataConnectionsCreate(params *DataConnectionsCreateParams) (*DataConnectionsCreateAccepted, error) {
 	// TODO: Validate the params before sending

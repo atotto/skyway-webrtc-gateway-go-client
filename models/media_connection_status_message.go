@@ -17,7 +17,7 @@ import (
 // swagger:model MediaConnectionStatusMessage
 type MediaConnectionStatusMessage struct {
 
-	// コネクションが開始されたときに、コネクションと関連付けされるメタデータです。
+	// コネクションが開始されたときに、コネクションと関連付けされるメタデータです
 	// Required: true
 	Metadata interface{} `json:"metadata"`
 

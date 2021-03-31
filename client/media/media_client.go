@@ -117,7 +117,7 @@ func (a *Client) MediaConnectionClose(params *MediaConnectionCloseParams) (*Medi
 /*
 MediaConnectionCreate リモートのs peerへの media connection確立を開始します
 
-リモートのpeerへ発信し、MediaConnectionの確立を試みます。接続確立は非同期で行われるため、/peers/{peer_id}/eventsを監視してください
+リモートのPeerへ発信し、MediaConnectionの確立を試みます。接続確立は非同期で行われるため、/peers/{peer_id}/eventsを監視してください
 */
 func (a *Client) MediaConnectionCreate(params *MediaConnectionCreateParams) (*MediaConnectionCreateAccepted, error) {
 	// TODO: Validate the params before sending
@@ -147,7 +147,7 @@ func (a *Client) MediaConnectionCreate(params *MediaConnectionCreateParams) (*Me
 /*
 MediaConnectionEvent media connectionオブジェクトからイベントを取得するのに利用します
 
-Long Pollでイベントを監視するのに利用します。連続でイベントが発火する場合があるため常に監視するようにしてください。
+Long Pollでイベントを監視するのに利用します。連続でイベントが発火する場合があるため常に監視するようにしてください
 */
 func (a *Client) MediaConnectionEvent(params *MediaConnectionEventParams) (*MediaConnectionEventOK, error) {
 	// TODO: Validate the params before sending
@@ -265,9 +265,9 @@ func (a *Client) MediaRtcpCreate(params *MediaRtcpCreateParams) (*MediaRtcpCreat
 }
 
 /*
-MediaRtcpDelete rs tcp待ち受けポーtpの解放
+MediaRtcpDelete rs tcp待ち受けポートの解放
 
-MediaConnectionで転送するRTCPを受け渡すためのUDPポートの閉鎖要求を送信します。MediaConnectionの中で利用中であればエラーを返します。
+MediaConnectionで転送するRTCPを受け渡すためのUDPポートの閉鎖要求を送信します。MediaConnectionの中で利用中であればエラーを返します
 */
 func (a *Client) MediaRtcpDelete(params *MediaRtcpDeleteParams) (*MediaRtcpDeleteNoContent, error) {
 	// TODO: Validate the params before sending
@@ -297,7 +297,7 @@ func (a *Client) MediaRtcpDelete(params *MediaRtcpDeleteParams) (*MediaRtcpDelet
 /*
 StreamsDelete mediaの解放s
 
-MediaConnectionで転送するMediaを受け渡すためのUDPポートの閉鎖要求を送信します。MediaConnectionの中で利用中であればエラーを返します。
+MediaConnectionで転送するMediaを受け渡すためのUDPポートの閉鎖要求を送信します。MediaConnectionの中で利用中であればエラーを返します
 */
 func (a *Client) StreamsDelete(params *StreamsDeleteParams) (*StreamsDeleteNoContent, error) {
 	// TODO: Validate the params before sending

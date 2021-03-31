@@ -27,7 +27,7 @@ type Client struct {
 /*
 Peer peerオブジェクトを生成しs sky wayサーバと接続します
 
-Peerオブジェクトを生成し、SkyWayサーバと接続します。SkyWayサーバと正常に接続できた場合のみ201を返します。
+Peerオブジェクトを生成し、SkyWayサーバと接続します。SkyWayサーバと正常に接続できた場合のみ201を返します
 */
 func (a *Client) Peer(params *PeerParams) (*PeerCreated, error) {
 	// TODO: Validate the params before sending
@@ -51,6 +51,36 @@ func (a *Client) Peer(params *PeerParams) (*PeerCreated, error) {
 		return nil, err
 	}
 	return result.(*PeerCreated), nil
+
+}
+
+/*
+PeerCredentialUpdate peer認証のクレデンシャルを更新しますs
+
+Peer認証のクレデンシャルを更新します。Peer認証機能が有効でなければ、クレデンシャルを更新する要求は無視されます。このとき、エラーイベントは発火しません
+*/
+func (a *Client) PeerCredentialUpdate(params *PeerCredentialUpdateParams) (*PeerCredentialUpdateOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPeerCredentialUpdateParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "peer_credential_update",
+		Method:             "PUT",
+		PathPattern:        "/peers/{peer_id}/credential",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &PeerCredentialUpdateReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*PeerCredentialUpdateOK), nil
 
 }
 
@@ -87,7 +117,7 @@ func (a *Client) PeerDestroy(params *PeerDestroyParams) (*PeerDestroyNoContent, 
 /*
 PeerEvent peerオブジェクトからイベントを取得するのに利用しますs
 
-Long Pollでイベントを監視するのに利用します。連続でイベントが発火する場合があるため常に監視するようにしてください。
+Long Pollでイベントを監視するのに利用します。連続でイベントが発火する場合があるため常に監視するようにしてください
 */
 func (a *Client) PeerEvent(params *PeerEventParams) (*PeerEventOK, error) {
 	// TODO: Validate the params before sending

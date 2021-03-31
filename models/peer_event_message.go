@@ -31,11 +31,14 @@ type PeerEventMessage struct {
 
 	// イベントの種別を示します
 	// Required: true
-	// Enum: [OPEN CONNECTION CALL STREAM CLOSE ERROR]
+	// Enum: [OPEN CONNECTION CALL CLOSE EXPIRESIN ERROR]
 	Event *string `json:"event"`
 
 	// params
 	Params *PeerParametsers `json:"params,omitempty"`
+
+	// expiresinイベントのときのみ含まれます。クレデンシャルが失効するまでの時間(秒)です
+	RemainingSec int64 `json:"remainingSec,omitempty"`
 }
 
 // Validate validates this peer event message
@@ -172,7 +175,7 @@ var peerEventMessageTypeEventPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["OPEN","CONNECTION","CALL","STREAM","CLOSE","ERROR"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["OPEN","CONNECTION","CALL","CLOSE","EXPIRESIN","ERROR"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -191,11 +194,11 @@ const (
 	// PeerEventMessageEventCALL captures enum value "CALL"
 	PeerEventMessageEventCALL string = "CALL"
 
-	// PeerEventMessageEventSTREAM captures enum value "STREAM"
-	PeerEventMessageEventSTREAM string = "STREAM"
-
 	// PeerEventMessageEventCLOSE captures enum value "CLOSE"
 	PeerEventMessageEventCLOSE string = "CLOSE"
+
+	// PeerEventMessageEventEXPIRESIN captures enum value "EXPIRESIN"
+	PeerEventMessageEventEXPIRESIN string = "EXPIRESIN"
 
 	// PeerEventMessageEventERROR captures enum value "ERROR"
 	PeerEventMessageEventERROR string = "ERROR"

@@ -29,7 +29,7 @@ type PeerVideoParameters struct {
 	// Required: true
 	MediaID *string `json:"media_id"`
 
-	// SDP内部でdynamic assignされるメディアのペイロード番号を指定
+	// SDP内部でdynamic assignされるメディアのペイロード番号を指定します
 	PayloadType int64 `json:"payload_type,omitempty"`
 
 	// RTCP転送ポートを特定するためのIDです

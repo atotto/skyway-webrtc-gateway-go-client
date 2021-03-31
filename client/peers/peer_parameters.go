@@ -65,7 +65,7 @@ for the peer operation typically these are written to a http.Request
 type PeerParams struct {
 
 	/*Body
-	  SkyWayサーバへアクセスするための情報を指定します
+	  SkyWayサーバへアクセスするための情報を指定します。Peerの認証機能が有効になっている場合は、クレデンシャルが必要です
 
 	*/
 	Body *models.PeerOptions

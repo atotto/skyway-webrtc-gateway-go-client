@@ -137,11 +137,11 @@ func (m *MediaConnectionEventMessage) UnmarshalBinary(b []byte) error {
 	return nil
 }
 
-// MediaConnectionEventMessageStreamOptions streamの内容を示します。streamイベントの場合のみ
+// MediaConnectionEventMessageStreamOptions streamの内容を示します。streamイベントのときのみ含まれます
 // swagger:model MediaConnectionEventMessageStreamOptions
 type MediaConnectionEventMessageStreamOptions struct {
 
-	// videoの場合にtrue, audioの場合false
+	// videoの場合にtrue, audioの場合にfalseを指定します
 	// Required: true
 	IsVideo *bool `json:"is_video"`
 

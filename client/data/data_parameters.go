@@ -63,7 +63,7 @@ for the data operation typically these are written to a http.Request
 type DataParams struct {
 
 	/*Body
-	  bodyには空のJSON文字列("{}"")が必要です
+	  bodyには空のJSON文字列("{}")が必要です
 
 	*/
 	Body interface{}

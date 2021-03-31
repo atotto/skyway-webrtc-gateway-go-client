@@ -17,30 +17,30 @@ import (
 // swagger:model DataConnectionStatusMessage
 type DataConnectionStatusMessage struct {
 
-	// ブラウザのバッファが一杯になった場合に、キューされるメッセージのサイズです。
+	// ブラウザのバッファが一杯になった場合に、キューされるメッセージのサイズです
 	// Required: true
 	Buffersize *int64 `json:"buffersize"`
 
-	// コネクションが開始されたときにPeerJSからアサインされる、または指定されるオプションのラベルです。
+	// コネクションが開始されたときにPeerJSからアサインされる、または指定されるオプションのラベルです
 	// Required: true
 	Label *string `json:"label"`
 
-	// コネクションが開始されたときに、コネクションと関連付けされるメタデータです。
+	// コネクションが開始されたときに、コネクションと関連付けされるメタデータです
 	// Required: true
 	Metadata interface{} `json:"metadata"`
 
-	// コネクションがopenであり、読み込み/書き込みの準備ができている場合にtrueになります。
+	// コネクションがopenであり、読み込み/書き込みの準備ができている場合にtrueになります
 	// Required: true
 	Open *bool `json:"open"`
 
-	// 信頼性のあるdata channelの場合にtrueです。コネクションの開始時に定義されます。
+	// 信頼性のあるdata channelの場合にtrueです。コネクションの開始時に定義されます
 	// Required: true
 	Reliable *bool `json:"reliable"`
 
 	// コネクションの相手側のpeer_idです
 	RemoteID string `json:"remote_id,omitempty"`
 
-	// コネクションを通じて送信されるデータのserializeフォーマットです。BINARY (デフォルト値)、 BINARY_UTF8、 JSON、 または NONE となります。
+	// コネクションを通じて送信されるデータのserializeフォーマットです。BINARY (デフォルト値)、 BINARY_UTF8、 JSON、 または NONE となります
 	// Required: true
 	Serialization *string `json:"serialization"`
 

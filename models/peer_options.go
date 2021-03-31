@@ -17,24 +17,31 @@ import (
 // swagger:model PeerOptions
 type PeerOptions struct {
 
-	// SkyWayでの開発者登録時に指定したWebサーバのドメイン文字列を指定します。
+	// credential
+	Credential *PeerCredential `json:"credential,omitempty"`
+
+	// SkyWayでの開発者登録時に指定したWebサーバのドメイン文字列を指定します
 	// Required: true
 	Domain *string `json:"domain"`
 
-	// クラウド上のPeerServerを利用するためのAPIキーです。
+	// クラウド上のPeerServerを利用するためのAPIキーです
 	// Required: true
 	Key *string `json:"key"`
 
-	// 他のピアがこのピアへ接続するときに使われるIDです。もしIDが指定されない場合、ブローカサーバがIDを生成します。
+	// 他のピアがこのピアへ接続するときに使われるIDです。もしIDが指定されない場合、ブローカサーバがIDを生成します
 	PeerID string `json:"peer_id,omitempty"`
 
-	// SkyWayのTURNサーバを利用する場合はtrueにします。デフォルトはtrueです。
+	// SkyWayのTURNサーバを利用する場合はtrueにします。デフォルトはtrueです
 	Turn bool `json:"turn,omitempty"`
 }
 
 // Validate validates this peer options
 func (m *PeerOptions) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateCredential(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateDomain(formats); err != nil {
 		res = append(res, err)
@@ -47,6 +54,24 @@ func (m *PeerOptions) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *PeerOptions) validateCredential(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Credential) { // not required
+		return nil
+	}
+
+	if m.Credential != nil {
+		if err := m.Credential.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("credential")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

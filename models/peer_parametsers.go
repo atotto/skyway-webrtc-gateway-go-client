@@ -21,7 +21,7 @@ type PeerParametsers struct {
 	// Required: true
 	PeerID *string `json:"peer_id"`
 
-	// Peerを利用するために必要なtokenです。
+	// Peerを利用するために必要なtokenです
 	Token string `json:"token,omitempty"`
 }
 
