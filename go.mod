@@ -8,5 +8,5 @@ require (
 	github.com/go-openapi/strfmt v0.19.0
 	github.com/go-openapi/swag v0.19.0
 	github.com/go-openapi/validate v0.19.0
-	golang.org/x/net v0.0.0-20190606173856-1492cefac77f
+	golang.org/x/net v0.7.0
 )
